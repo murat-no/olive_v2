@@ -1,0 +1,34 @@
+name: olive_v2
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.5.2
+
+    
+
+dependencies:
+  flutter:
+    sdk: flutter
+  json_annotation: 4.9.0 # json_serializable'ın kullandığı anotasyonlar    
+  http: ^1.0.0 # Eğer eklemediyseniz, API çağrıları için bu gerekli olacak
+  mobx: ^2.2.0 # MobX core paketi
+  flutter_mobx: ^2.0.6 # Flutter widget'ları ile MobX entegrasyonu  
+  flutter_secure_storage: ^8.0.0 # Güvenli depolama paketi
+  intl: any 
+  provider: ^6.1.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  build_runner: ^2.4.6 # Kod üretme aracımız
+  json_serializable: ^6.7.1 # JSON serileştirme kodu üretici
+  mobx_codegen: ^2.3.0 # MobX kod üretici
+
+
+flutter:
+  uses-material-design: true
+assets:
+  - images/
