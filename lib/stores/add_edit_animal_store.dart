@@ -86,7 +86,7 @@ abstract class _AddEditAnimalStore with Store {
 
       // Family Dropdown için başlangıç seçimi (Case-insensitive karşılaştırma)
       selectedFamilyOption = familyList.firstWhereOrNull((opt) => opt.id?.toLowerCase() == familyKey?.toLowerCase());
-      print('DEBUG: Initial Family Selection: ${selectedFamilyOption?.value ?? "Yok"} (Key: ${familyKey})');
+      print('DEBUG: Initial Family Selection: ${selectedFamilyOption?.value ?? "Yok"} (Key: $familyKey)');
 
       // Eğer Family set edilebildiyse, Race listesini çek ve Race Dropdown başlangıç seçimini yap
       if (selectedFamilyOption?.id != null && selectedFamilyOption!.id!.isNotEmpty) {
@@ -94,7 +94,7 @@ abstract class _AddEditAnimalStore with Store {
 
          // Race Dropdown için başlangıç seçimi (Case-insensitive karşılaştırma)
          selectedRaceOption = raceList.firstWhereOrNull((opt) => opt.id?.toLowerCase() == raceKey?.toLowerCase());
-         print('DEBUG: Initial Race Selection: ${selectedRaceOption?.value ?? "Yok"} (Key: ${raceKey})');
+         print('DEBUG: Initial Race Selection: ${selectedRaceOption?.value ?? "Yok"} (Key: $raceKey)');
       } else {
          raceList = ObservableList();
          selectedRaceOption = null;
@@ -103,14 +103,14 @@ abstract class _AddEditAnimalStore with Store {
 
       // Diğer Dropdown'lar için başlangıç seçimleri (Case-insensitive karşılaştırma)
       selectedBreedOption = breedList.firstWhereOrNull((opt) => opt.id?.toLowerCase() == breedKey?.toLowerCase());
-      print('DEBUG: Initial Breed Selection: ${selectedBreedOption?.value ?? "Yok"} (Key: ${breedKey})');
+      print('DEBUG: Initial Breed Selection: ${selectedBreedOption?.value ?? "Yok"} (Key: $breedKey)');
 
       selectedSexOption = sexList.firstWhereOrNull((opt) => opt.id?.toLowerCase() == sexKey?.toLowerCase());
-      print('DEBUG: Initial Sex Selection: ${selectedSexOption?.value ?? "Yok"} (Key: ${sexKey})');
+      print('DEBUG: Initial Sex Selection: ${selectedSexOption?.value ?? "Yok"} (Key: $sexKey)');
 
       // TrackingMethod (Key alanı trackingMethod olarak adlandırılmış) (Case-insensitive karşılaştırma)
       selectedTrackingMethodOption = trackingMethodList.firstWhereOrNull((opt) => opt.id?.toLowerCase() == trackingMethod?.toLowerCase());
-      print('DEBUG: Initial TrackingMethod Selection: ${selectedTrackingMethodOption?.value ?? "Yok"} (Key: ${trackingMethod})');
+      print('DEBUG: Initial TrackingMethod Selection: ${selectedTrackingMethodOption?.value ?? "Yok"} (Key: $trackingMethod)');
 
       // TODO: Eğer color, colorDisp alanları için de dropdown varsa, onların da başlangıç seçimleri burada yapılmalı.
   }

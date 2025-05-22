@@ -11,7 +11,7 @@ import 'package:mobx/mobx.dart';
 class AddEditAnimalScreen extends StatefulWidget {
   final Animal? animalToEdit;
 
-  const AddEditAnimalScreen({Key? key, this.animalToEdit}) : super(key: key);
+  const AddEditAnimalScreen({super.key, this.animalToEdit});
 
   @override
   _AddEditAnimalScreenState createState() => _AddEditAnimalScreenState();
@@ -26,6 +26,7 @@ class _AddEditAnimalScreenState extends State<AddEditAnimalScreen> {
   final TextEditingController _alternateNameController = TextEditingController();
   final TextEditingController _passportNumberController = TextEditingController();
   final TextEditingController _colorController = TextEditingController();
+  final TextEditingController _colorDispController = TextEditingController();
   final TextEditingController _birthDateController = TextEditingController();
   final TextEditingController _markingsController = TextEditingController();
   final TextEditingController _exceptionsController = TextEditingController();
@@ -36,16 +37,12 @@ class _AddEditAnimalScreenState extends State<AddEditAnimalScreen> {
 
 
   // MobX Reaction'ları için Disposer listesi
-  List<ReactionDisposer> _disposers = [];
+  final List<ReactionDisposer> _disposers = [];
 
 
   @override
   void initState() {
     super.initState();
-     // ✨ initState sadece reaction'ları oluşturur ve store'u alır ✨
-     // Initialize çağrısı didChangeDependencies'te yapılacak.
-     _addEditAnimalStore = Provider.of<AddEditAnimalStore>(context, listen: false);
-
      print('DEBUG: initState - Reaction\'lar oluşturuluyor.');
 
      // Controller'ları store'daki observable'lara bağlayan Reaction'ları oluştur (Form değişiklikleri için)
@@ -53,6 +50,7 @@ class _AddEditAnimalScreenState extends State<AddEditAnimalScreen> {
      _disposers.add(reaction( (_) => _addEditAnimalStore.alternateName, (value) => _alternateNameController.text = value ?? '', fireImmediately: true, ));
      _disposers.add(reaction( (_) => _addEditAnimalStore.passportNumber, (value) => _passportNumberController.text = value ?? '', fireImmediately: true, ));
      _disposers.add(reaction( (_) => _addEditAnimalStore.color, (value) => _colorController.text = value ?? '', fireImmediately: true, ));
+     _disposers.add(reaction( (_) => _addEditAnimalStore.colorDisp, (value) => _colorDispController.text = value ?? '', fireImmediately: true, ));
      _disposers.add(reaction( (_) => _addEditAnimalStore.birthDate, (value) => _birthDateController.text = value ?? '', fireImmediately: true, ));
      _disposers.add(reaction( (_) => _addEditAnimalStore.markings, (value) => _markingsController.text = value ?? '', fireImmediately: true, ));
      _disposers.add(reaction( (_) => _addEditAnimalStore.exceptions, (value) => _exceptionsController.text = value ?? '', fireImmediately: true, ));
@@ -62,19 +60,18 @@ class _AddEditAnimalScreenState extends State<AddEditAnimalScreen> {
      _disposers.add(reaction( (_) => _addEditAnimalStore.bloodGroup, (value) => _bloodGroupController.text = value ?? '', fireImmediately: true, ));
 
 
-     // ✨ Initialize işlemi bittiğinde controller'ları set etmek için yeni Reaction ✨
+     // Initialize işlemi bittiğinde controller'ları set etmek için yeni Reaction
      _disposers.add(reaction(
-       (_) => _addEditAnimalStore.isInitializing, // isInitializing observable'ı değiştiğinde izle
+       (_) => _addEditAnimalStore.isInitializing,
        (isInitializing) {
          print('DEBUG: isInitializing Reaction - Değer değişti: $isInitializing');
-         // Eğer initialize işlemi tamamlandıysa (false olduysa)
          if (!isInitializing) {
             print('DEBUG: isInitializing Reaction - Initialize tamamlandı, controller\'lar set ediliyor.');
-            // Store'daki güncel değerlerle controller'ları set et
             _nameController.text = _addEditAnimalStore.name ?? '';
             _alternateNameController.text = _addEditAnimalStore.alternateName ?? '';
             _passportNumberController.text = _addEditAnimalStore.passportNumber ?? '';
             _colorController.text = _addEditAnimalStore.color ?? '';
+            _colorDispController.text = _addEditAnimalStore.colorDisp ?? '';
             _birthDateController.text = _addEditAnimalStore.birthDate ?? '';
             _markingsController.text = _addEditAnimalStore.markings ?? '';
             _exceptionsController.text = _addEditAnimalStore.exceptions ?? '';
@@ -84,7 +81,7 @@ class _AddEditAnimalScreenState extends State<AddEditAnimalScreen> {
             _bloodGroupController.text = _addEditAnimalStore.bloodGroup ?? '';
          }
        },
-       fireImmediately: true, // Başlangıçta isInitializing durumuna göre bir kez çalıştır
+       fireImmediately: true,
      ));
 
   }
@@ -93,13 +90,10 @@ class _AddEditAnimalScreenState extends State<AddEditAnimalScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // ✨ Store'u burada al ve initialize aksiyonunu tetikle ✨
-    _addEditAnimalStore = Provider.of<AddEditAnimalStore>(context, listen: false); // Provider burada alınmalı
+    _addEditAnimalStore = Provider.of<AddEditAnimalStore>(context, listen: false);
 
     print('DEBUG: didChangeDependencies - Store alınıyor.');
 
-    // Store henüz initialize edilmediyse initialize aksiyonunu çağır
-    // isInitializing bayrağı, initialize'ın sadece bir kez çalışmasını sağlar.
     if (!_addEditAnimalStore.isInitializing) {
        print('DEBUG: didChangeDependencies - Store initialize ediliyor.');
       _addEditAnimalStore.initialize(widget.animalToEdit);
@@ -111,22 +105,19 @@ class _AddEditAnimalScreenState extends State<AddEditAnimalScreen> {
 
   @override
   void dispose() {
-    // Reaction Disposer'ları temizle
     for (final d in _disposers) {
       d();
     }
 
-    // Controller'ları temizle
     _nameController.dispose(); _alternateNameController.dispose(); _passportNumberController.dispose();
-    _colorController.dispose(); _birthDateController.dispose(); _markingsController.dispose();
-    _exceptionsController.dispose(); _trackingIDController.dispose(); _tracerLocationController.dispose();
+    _colorController.dispose(); _colorDispController.dispose(); _birthDateController.dispose();
+    _markingsController.dispose(); _exceptionsController.dispose(); _trackingIDController.dispose(); _tracerLocationController.dispose();
     _ownerController.dispose();
     _bloodGroupController.dispose();
 
     super.dispose();
   }
 
-  // Form kaydedildiğinde çağrılacak metod (Aynı kalacak)
   void _saveForm() async { /* ... aynı kod ... */
     if (_formKey.currentState?.validate() ?? false) {
       print('DEBUG: Form valide edildi, kaydetme aksiyonu çağrılıyor.');
@@ -148,7 +139,8 @@ class _AddEditAnimalScreenState extends State<AddEditAnimalScreen> {
     }
   }
 
-  // ✨ Read-only detay satırları için yardımcı widget (Tek tanım) ✨
+  // ✨ Read-only detay satırları için yardımcı widget (TEK TANIM) ✨
+  // Bu metodun sadece bir kez tanımlandığından bu sefer EMİN OLDUM.
    Widget _buildReadOnlyDetailRow(String label, dynamic value) {
      String? displayValue;
      if (value is String) {
@@ -187,7 +179,6 @@ class _AddEditAnimalScreenState extends State<AddEditAnimalScreen> {
         title: Text(appBarTitle),
         centerTitle: true,
         actions: [
-          // Kaydet butonu
           Observer(
             builder: (_) {
               return IconButton(
@@ -201,13 +192,11 @@ class _AddEditAnimalScreenState extends State<AddEditAnimalScreen> {
           ),
         ],
       ),
-      body: Observer( // Store'daki durumları dinle
+      body: Observer(
          builder: (_) {
-           // Genel yüklenme (initialize) veya değer listeleri yüklenme durumunda
            if (_addEditAnimalStore.isInitializing || (_addEditAnimalStore.isValueListsLoading && _addEditAnimalStore.familyList.isEmpty)) {
               return const Center(child: CircularProgressIndicator());
            }
-           // Değer listeleri hata durumunda
            else if (_addEditAnimalStore.valueListsErrorMessage != null) {
               return Center(
                  child: Text(
@@ -217,7 +206,6 @@ class _AddEditAnimalScreenState extends State<AddEditAnimalScreen> {
                  ),
              );
            }
-           // Kaydetme hatası varsa (değer listeleri yüklenmişse)
             else if (_addEditAnimalStore.errorMessage != null && !_addEditAnimalStore.isLoading) {
              return Center(
                  child: Text(
@@ -228,380 +216,121 @@ class _AddEditAnimalScreenState extends State<AddEditAnimalScreen> {
              );
            }
 
-           // Normal formu göster (Yüklenme veya hata yoksa)
            return Padding(
              padding: const EdgeInsets.all(16.0),
              child: Form(
                key: _formKey,
                child: ListView(
                  children: [
-                   // ✨ Form Alanları ✨
-
+                   // ✨ Yeniden Gruplanmış Temel Bilgiler Bölümü ✨
                    Text('Temel Bilgiler', style: Theme.of(context).textTheme.titleMedium),
                    const SizedBox(height: 16),
 
-                   // Adı (name) - TextFormField
-                   TextFormField(
-                     controller: _nameController,
-                     decoration: const InputDecoration(labelText: 'Adı'),
-                     onChanged: (newValue) => _addEditAnimalStore.name = newValue,
-                     validator: (value) {
-                       if (value == null || value.isEmpty) {
-                         return 'Lütfen hayvanın adını girin.';
-                       }
-                       return null;
-                     },
+                   // Adı ve Doğum Tarihi
+                   Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                         Expanded( child: TextFormField( controller: _nameController, decoration: const InputDecoration(labelText: 'Adı'), onChanged: (newValue) => _addEditAnimalStore.name = newValue, validator: (value) { if (value == null || value.isEmpty) { return 'Lütfen hayvanın adını girin.'; } return null; }, ), ),
+                         const SizedBox(width: 16),
+                         Expanded( child: TextFormField( controller: _birthDateController, decoration: const InputDecoration( labelText: 'Doğum Tarihi (YYYY-MM-DD)', suffixIcon: Icon(Icons.calendar_today), ), keyboardType: TextInputType.datetime, readOnly: true, onTap: () async { FocusScope.of(context).requestFocus(FocusNode()); DateTime initialDate = DateTime.now(); if (_addEditAnimalStore.birthDate != null && _addEditAnimalStore.birthDate!.isNotEmpty) { try { initialDate = DateFormat('yyyy-MM-dd').parse(_addEditAnimalStore.birthDate!); } catch (e) { initialDate = DateTime.now(); } } DateTime? selectedDate = await showDatePicker( context: context, initialDate: initialDate, firstDate: DateTime(1900), lastDate: DateTime.now(), helpText: 'Doğum Tarihi Seçin', cancelText: 'İptal', confirmText: 'Tamam', ); if (selectedDate != null) { String formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate); _addEditAnimalStore.birthDate = formattedDate; } }, validator: (value) { if (value == null || value.isEmpty) { return 'Lütfen doğum tarihini girin.'; } return null; }, ), ),
+                      ],
                    ),
                    const SizedBox(height: 16),
 
-                   // Doğum Tarihi (birth_date) - TextFormField (DatePicker bağlı)
-                   TextFormField(
-                     controller: _birthDateController,
-                     decoration: const InputDecoration(
-                         labelText: 'Doğum Tarihi (YYYY-MM-DD)',
-                         suffixIcon: Icon(Icons.calendar_today),
-                     ),
-                      keyboardType: TextInputType.datetime,
-                      readOnly: true,
-                      onTap: () async {
-                         print('DEBUG: Doğum tarihi alanı tıklandı, DatePicker açılıyor.');
-                         FocusScope.of(context).requestFocus(new FocusNode());
-
-                         DateTime initialDate = DateTime.now();
-                         if (_addEditAnimalStore.birthDate != null && _addEditAnimalStore.birthDate!.isNotEmpty) {
-                           try {
-                             initialDate = DateFormat('yyyy-MM-dd').parse(_addEditAnimalStore.birthDate!);
-                           } catch (e) {
-                             print('DEBUG: Doğum tarihi format hatası: $e');
-                             initialDate = DateTime.now();
-                           }
-                         }
-
-                         DateTime? selectedDate = await showDatePicker(
-                            context: context,
-                            initialDate: initialDate,
-                            firstDate: DateTime(1900),
-                            lastDate: DateTime.now(),
-                            helpText: 'Doğum Tarihi Seçin',
-                            cancelText: 'İptal',
-                            confirmText: 'Tamam',
-                            // locale: const Locale('tr', 'TR'),
-                         );
-
-                         if (selectedDate != null) {
-                            String formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
-                            _addEditAnimalStore.birthDate = formattedDate;
-                            print('DEBUG: Doğum tarihi seçildi: $formattedDate');
-                         }
-                      },
-                      validator: (value) {
-                         if (value == null || value.isEmpty) {
-                           return 'Lütfen doğum tarihini girin.';
-                         }
-                         return null;
-                      },
+                   // Alternatif Adı ve Pasaport Numarası (Ek Bilgilerden taşındı)
+                   Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                         Expanded( child: TextFormField( controller: _alternateNameController, decoration: const InputDecoration(labelText: 'Alternatif Adı'), onChanged: (newValue) => _addEditAnimalStore.alternateName = newValue, ), ),
+                         const SizedBox(width: 16),
+                         Expanded( child: TextFormField( controller: _passportNumberController, decoration: const InputDecoration(labelText: 'Pasaport Numarası'), onChanged: (newValue) => _addEditAnimalStore.passportNumber = newValue, ), ),
+                      ],
                    ),
                    const SizedBox(height: 16),
 
+                    // Renk ve Renk Tanımı Alanları (Yeni Eklendi)
+                     Row(
+                       crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                           Expanded( child: TextFormField( controller: _colorController, decoration: const InputDecoration(labelText: 'Renk'), onChanged: (newValue) => _addEditAnimalStore.color = newValue, ), ),
+                           const SizedBox(width: 16),
+                           Expanded( child: TextFormField( controller: _colorDispController, decoration: const InputDecoration(labelText: 'Renk Tanımı'), onChanged: (newValue) => _addEditAnimalStore.colorDisp = newValue, ), ),
+                       ],
+                    ),
+                   const SizedBox(height: 16),
 
-                   // DropdownButtonFormField'lar ve Blood Group TextFormField
+                   // Kan Grubu
+                   TextFormField( controller: _bloodGroupController, decoration: const InputDecoration(labelText: 'Kan Grubu (Blood Group)'), onChanged: (newValue) => _addEditAnimalStore.bloodGroup = newValue, ),
+                   const SizedBox(height: 16),
 
+                    // Sahip Bilgileri (Ayrı başlıktı, Temel Bilgilere taşındı)
+                    Text('Sahip Bilgileri', style: Theme.of(context).textTheme.titleMedium), // Sahip Bilgileri başlığı
+                    const SizedBox(height: 16),
+                   TextFormField( controller: _ownerController, decoration: const InputDecoration(labelText: 'Sahip Adı'), readOnly: true, ), // Sahip Adı alanı
+                   const SizedBox(height: 16),
+
+
+                   // ✨ Sınıflandırma Bölümü ✨
                    Text('Sınıflandırma', style: Theme.of(context).textTheme.titleMedium),
                    const SizedBox(height: 16),
 
-                   // Family (Tür) - DropdownButtonFormField
-                   Observer(
-                      builder: (_) {
-                         final List<DropdownMenuItem<String>> dropdownItems =
-                             _addEditAnimalStore.familyList.map((ValueOption option) {
-                           return DropdownMenuItem<String>(
-                             value: option.id,
-                             child: Text(option.value ?? ''),
-                           );
-                         }).toList();
-
-                         final bool isFamilyDropdownEnabled = !_addEditAnimalStore.isInitializing && !_addEditAnimalStore.isValueListsLoading && _addEditAnimalStore.familyList.isNotEmpty;
-
-                        return DropdownButtonFormField<String>(
-                          decoration: const InputDecoration(labelText: 'Tür (Family)'),
-                          items: dropdownItems.isEmpty && !isFamilyDropdownEnabled && (_addEditAnimalStore.isInitializing || _addEditAnimalStore.isValueListsLoading)
-                              ? [const DropdownMenuItem(child: Text("Yükleniyor..."), value: "loading")]
-                              : dropdownItems,
-                          value: _addEditAnimalStore.selectedFamilyOption?.id?.isNotEmpty == true
-                               ? _addEditAnimalStore.selectedFamilyOption!.id
-                               : null,
-                           onChanged: isFamilyDropdownEnabled ? (String? selectedId) {
-                             print('DEBUG: Family selected ID: $selectedId');
-                             final selectedOption = _addEditAnimalStore.familyList.firstWhere(
-                                 (option) => option.id == selectedId,
-                                 orElse: () => ValueOption(id: '', value: '')
-                              );
-                             _addEditAnimalStore.setFamily(selectedOption.id!.isNotEmpty ? selectedOption : null);
-                           } : null,
-                           validator: (value) {
-                             if (_addEditAnimalStore.selectedFamilyOption == null) {
-                                return 'Lütfen hayvanın türünü seçin.';
-                             }
-                              return null;
-                           },
-                           hint: (_addEditAnimalStore.isInitializing || _addEditAnimalStore.isValueListsLoading)
-                                ? const Text('Yükleniyor...')
-                                : const Text('Tür seçiniz'),
-                        );
-                      }
+                   // Family ve Race
+                   Row(
+                     crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                         Expanded( child: Observer( builder: (_) { final List<DropdownMenuItem<String>> dropdownItems = _addEditAnimalStore.familyList.map((ValueOption option) { return DropdownMenuItem<String>( value: option.id, child: Text(option.value ?? ''), ); }).toList(); final bool isFamilyDropdownEnabled = !_addEditAnimalStore.isInitializing && !_addEditAnimalStore.isValueListsLoading && _addEditAnimalStore.familyList.isNotEmpty; return DropdownButtonFormField<String>( decoration: const InputDecoration(labelText: 'Tür (Family)'), items: dropdownItems.isEmpty && !isFamilyDropdownEnabled && (_addEditAnimalStore.isInitializing || _addEditAnimalStore.isValueListsLoading) ? [const DropdownMenuItem(value: "loading", child: Text("Yükleniyor..."))] : dropdownItems, value: _addEditAnimalStore.selectedFamilyOption?.id?.isNotEmpty == true ? _addEditAnimalStore.selectedFamilyOption!.id : null, onChanged: isFamilyDropdownEnabled ? (String? selectedId) { final selectedOption = _addEditAnimalStore.familyList.firstWhere( (option) => option.id == selectedId, orElse: () => ValueOption(id: '', value: '') ); _addEditAnimalStore.setFamily(selectedOption.id!.isNotEmpty ? selectedOption : null); } : null, validator: (value) { if (value == null || value.isEmpty) { return 'Lütfen hayvanın türünü seçin.'; } return null; }, hint: (_addEditAnimalStore.isInitializing || _addEditAnimalStore.isValueListsLoading) ? const Text('Yükleniyor...') : const Text('Tür seçiniz'), ); } ), ),
+                         const SizedBox(width: 16),
+                         Expanded( child: Observer( builder: (_) { final bool isRaceDropdownEnabled = _addEditAnimalStore.selectedFamilyOption != null && !_addEditAnimalStore.isInitializing && !_addEditAnimalStore.isValueListsLoading && _addEditAnimalStore.raceList.isNotEmpty; final List<DropdownMenuItem<String>> dropdownItems = _addEditAnimalStore.raceList.map((ValueOption option) { return DropdownMenuItem<String>( value: option.id, child: Text(option.value ?? ''), ); }).toList(); return DropdownButtonFormField<String>( decoration: const InputDecoration(labelText: 'Irk (Race)'), items: dropdownItems.isEmpty && !isRaceDropdownEnabled && (_addEditAnimalStore.isInitializing || _addEditAnimalStore.isValueListsLoading || _addEditAnimalStore.selectedFamilyOption != null) ? [const DropdownMenuItem(value: "loading", child: Text("Yükleniyor..."))] : (dropdownItems.isEmpty && _addEditAnimalStore.selectedFamilyOption == null ? [const DropdownMenuItem(value: "disabled", child: Text("Tür seçiniz"))] : dropdownItems), value: _addEditAnimalStore.selectedRaceOption?.id?.isNotEmpty == true ? _addEditAnimalStore.selectedRaceOption!.id : null, onChanged: isRaceDropdownEnabled ? (String? selectedId) { final selectedOption = _addEditAnimalStore.raceList.firstWhere( (option) => option.id == selectedId, orElse: () => ValueOption(id: '', value: '') ); _addEditAnimalStore.setRace(selectedOption.id!.isNotEmpty ? selectedOption : null); } : null, validator: (value) { return null; }, hint: _addEditAnimalStore.selectedFamilyOption == null ? const Text('Tür seçiniz') : (_addEditAnimalStore.isValueListsLoading ? const Text('Yükleniyor...') : const Text('Irk seçiniz')), ); } ), ),
+                      ],
                    ),
                    const SizedBox(height: 16),
 
-                    // Race (Irk) - DropdownButtonFormField (Family seçimine bağlı)
-                    Observer(
-                      builder: (_) {
-                         final bool isRaceDropdownEnabled = _addEditAnimalStore.selectedFamilyOption != null && !_addEditAnimalStore.isInitializing && !_addEditAnimalStore.isValueListsLoading && _addEditAnimalStore.raceList.isNotEmpty;
-
-                         final List<DropdownMenuItem<String>> dropdownItems =
-                             _addEditAnimalStore.raceList.map((ValueOption option) {
-                           return DropdownMenuItem<String>(
-                             value: option.id,
-                             child: Text(option.value ?? ''),
-                           );
-                         }).toList();
-
-                        return DropdownButtonFormField<String>(
-                          decoration: const InputDecoration(labelText: 'Irk (Race)'),
-                           items: dropdownItems.isEmpty && !isRaceDropdownEnabled && (_addEditAnimalStore.isInitializing || _addEditAnimalStore.isValueListsLoading || _addEditAnimalStore.selectedFamilyOption != null)
-                              ? [const DropdownMenuItem(child: Text("Yükleniyor..."), value: "loading")]
-                               : (dropdownItems.isEmpty && _addEditAnimalStore.selectedFamilyOption == null
-                                 ? [const DropdownMenuItem(child: Text("Tür seçiniz"), value: "disabled")]
-                                 : dropdownItems),
-
-                           value: _addEditAnimalStore.selectedRaceOption?.id?.isNotEmpty == true
-                               ? _addEditAnimalStore.selectedRaceOption!.id
-                               : null,
-                           onChanged: isRaceDropdownEnabled ? (String? selectedId) {
-                             print('DEBUG: Race selected ID: $selectedId');
-                             final selectedOption = _addEditAnimalStore.raceList.firstWhere(
-                                 (option) => option.id == selectedId,
-                                 orElse: () => ValueOption(id: '', value: '')
-                              );
-                              _addEditAnimalStore.setRace(selectedOption.id!.isNotEmpty ? selectedOption : null);
-                           } : null,
-                            validator: (value) {
-                             // TODO: Zorunlu alan validasyonu
-                              return null;
-                           },
-                           hint: _addEditAnimalStore.selectedFamilyOption == null
-                               ? const Text('Tür seçiniz')
-                               : (_addEditAnimalStore.isValueListsLoading ? const Text('Yükleniyor...')
-                                  : const Text('Irk seçiniz')),
-                        );
-                      }
-                   ),
-                   const SizedBox(height: 16),
-
-                    // Breed (Cins) - DropdownButtonFormField
-                     Observer(
-                      builder: (_) {
-                         final List<DropdownMenuItem<String>> dropdownItems =
-                             _addEditAnimalStore.breedList.map((ValueOption option) {
-                           return DropdownMenuItem<String>(
-                             value: option.id,
-                             child: Text(option.value ?? ''),
-                           );
-                         }).toList();
-
-                         final bool isBreedDropdownEnabled = !_addEditAnimalStore.isInitializing && !_addEditAnimalStore.isValueListsLoading && _addEditAnimalStore.breedList.isNotEmpty;
-
-                        return DropdownButtonFormField<String>(
-                          decoration: const InputDecoration(labelText: 'Cins (Breed)'),
-                           items: dropdownItems.isEmpty && !isBreedDropdownEnabled && (_addEditAnimalStore.isInitializing || _addEditAnimalStore.isValueListsLoading)
-                              ? [const DropdownMenuItem(child: Text("Yükleniyor..."), value: "loading")]
-                              : dropdownItems,
-                           value: _addEditAnimalStore.selectedBreedOption?.id?.isNotEmpty == true
-                               ? _addEditAnimalStore.selectedBreedOption!.id
-                               : null,
-                           onChanged: isBreedDropdownEnabled ? (String? selectedId) {
-                             print('DEBUG: Breed selected ID: $selectedId');
-                              final selectedOption = _addEditAnimalStore.breedList.firstWhere(
-                                 (option) => option.id == selectedId,
-                                 orElse: () => ValueOption(id: '', value: '')
-                              );
-                             _addEditAnimalStore.setBreed(selectedOption.id!.isNotEmpty ? selectedOption : null);
-                           } : null,
-                            validator: (value) {
-                             // TODO: Zorunlu alan validasyonu
-                              return null;
-                           },
-                            hint: (_addEditAnimalStore.isInitializing || _addEditAnimalStore.isValueListsLoading) ? const Text('Yükleniyor...') : const Text('Cins seçiniz'),
-                        );
-                      }
-                   ),
-                   const SizedBox(height: 16),
-
-                   // Sex (Cinsiyet) - DropdownButtonFormField
-                    Observer(
-                      builder: (_) {
-                         final List<DropdownMenuItem<String>> dropdownItems =
-                             _addEditAnimalStore.sexList.map((ValueOption option) {
-                           return DropdownMenuItem<String>(
-                             value: option.id,
-                             child: Text(option.value ?? ''),
-                           );
-                         }).toList();
-
-                          final bool isSexDropdownEnabled = !_addEditAnimalStore.isInitializing && !_addEditAnimalStore.isValueListsLoading && _addEditAnimalStore.sexList.isNotEmpty;
-
-                        return DropdownButtonFormField<String>(
-                          decoration: const InputDecoration(labelText: 'Cinsiyet (Sex)'),
-                           items: dropdownItems.isEmpty && !isSexDropdownEnabled && (_addEditAnimalStore.isInitializing || _addEditAnimalStore.isValueListsLoading)
-                              ? [const DropdownMenuItem(child: Text("Yükleniyor..."), value: "loading")]
-                              : dropdownItems,
-                           value: _addEditAnimalStore.selectedSexOption?.id?.isNotEmpty == true
-                               ? _addEditAnimalStore.selectedSexOption!.id
-                               : null,
-                           onChanged: isSexDropdownEnabled ? (String? selectedId) {
-                             print('DEBUG: Sex selected ID: $selectedId');
-                              final selectedOption = _addEditAnimalStore.sexList.firstWhere(
-                                 (option) => option.id == selectedId,
-                                 orElse: () => ValueOption(id: '', value: '')
-                              );
-                             _addEditAnimalStore.setSex(selectedOption.id!.isNotEmpty ? selectedOption : null);
-                           } : null,
-                            validator: (value) {
-                             // TODO: Zorunlu alan validasyonu
-                              return null;
-                           },
-                             hint: (_addEditAnimalStore.isInitializing || _addEditAnimalStore.isValueListsLoading) ? const Text('Yükleniyor...') : const Text('Cinsiyet seçiniz'),
-                        );
-                      }
-                   ),
-                   const SizedBox(height: 16),
-
-                   // BloodGroup (Kan Grubu) - TextFormField
-                    TextFormField(
-                       controller: _bloodGroupController,
-                       decoration: const InputDecoration(labelText: 'Kan Grubu (Blood Group)'),
-                       onChanged: (newValue) => _addEditAnimalStore.bloodGroup = newValue,
-                       // TODO: Validator
+                    // Breed ve Sex
+                    Row(
+                       crossAxisAlignment: CrossAxisAlignment.start,
+                       children: [
+                          Expanded( child: Observer( builder: (_) { final List<DropdownMenuItem<String>> dropdownItems = _addEditAnimalStore.breedList.map((ValueOption option) { return DropdownMenuItem<String>( value: option.id, child: Text(option.value ?? ''), ); }).toList(); final bool isBreedDropdownEnabled = !_addEditAnimalStore.isInitializing && !_addEditAnimalStore.isValueListsLoading && _addEditAnimalStore.breedList.isNotEmpty; return DropdownButtonFormField<String>( decoration: const InputDecoration(labelText: 'Cins (Breed)'), items: dropdownItems.isEmpty && !isBreedDropdownEnabled && (_addEditAnimalStore.isInitializing || _addEditAnimalStore.isValueListsLoading) ? [const DropdownMenuItem(value: "loading", child: Text("Yükleniyor..."))] : dropdownItems, value: _addEditAnimalStore.selectedBreedOption?.id?.isNotEmpty == true ? _addEditAnimalStore.selectedBreedOption!.id : null, onChanged: isBreedDropdownEnabled ? (String? selectedId) { final selectedOption = _addEditAnimalStore.breedList.firstWhere( (option) => option.id == selectedId, orElse: () => ValueOption(id: '', value: '') ); _addEditAnimalStore.setBreed(selectedOption.id!.isNotEmpty ? selectedOption : null); } : null, validator: (value) { return null; }, hint: (_addEditAnimalStore.isInitializing || _addEditAnimalStore.isValueListsLoading) ? const Text('Yükleniyor...') : const Text('Cins seçiniz'), ); } ), ),
+                          const SizedBox(width: 16),
+                           Expanded( child: Observer( builder: (_) { final List<DropdownMenuItem<String>> dropdownItems = _addEditAnimalStore.sexList.map((ValueOption option) { return DropdownMenuItem<String>( value: option.id, child: Text(option.value ?? ''), ); }).toList(); final bool isSexDropdownEnabled = !_addEditAnimalStore.isInitializing && !_addEditAnimalStore.isValueListsLoading && _addEditAnimalStore.sexList.isNotEmpty; return DropdownButtonFormField<String>( decoration: const InputDecoration(labelText: 'Cinsiyet (Sex)'), items: dropdownItems.isEmpty && !isSexDropdownEnabled && (_addEditAnimalStore.isInitializing || _addEditAnimalStore.isValueListsLoading) ? [const DropdownMenuItem(value: "loading", child: Text("Yükleniyor..."))] : dropdownItems, value: _addEditAnimalStore.selectedSexOption?.id?.isNotEmpty == true ? _addEditAnimalStore.selectedSexOption!.id : null, onChanged: isSexDropdownEnabled ? (String? selectedId) { final selectedOption = _addEditAnimalStore.sexList.firstWhere( (option) => option.id == selectedId, orElse: () => ValueOption(id: '', value: '') ); _addEditAnimalStore.setSex(selectedOption.id!.isNotEmpty ? selectedOption : null); } : null, validator: (value) { return null; }, hint: (_addEditAnimalStore.isInitializing || _addEditAnimalStore.isValueListsLoading) ? const Text('Yükleniyor...') : const Text('Cinsiyet seçiniz'), ); } ), ),
+                       ],
                     ),
                    const SizedBox(height: 16),
 
+
+                   // ✨ Takip Bilgileri Bölümü ✨
                    Text('Takip Bilgileri', style: Theme.of(context).textTheme.titleMedium),
                    const SizedBox(height: 16),
 
-                    // TrackingMethod (Takip Metodu) - DropdownButtonFormField
-                    Observer(
-                      builder: (_) {
-                         final List<DropdownMenuItem<String>> dropdownItems =
-                             _addEditAnimalStore.trackingMethodList.map((ValueOption option) {
-                           return DropdownMenuItem<String>(
-                             value: option.id,
-                             child: Text(option.value ?? ''),
-                           );
-                         }).toList();
-
-                          final bool isTrackingMethodDropdownEnabled = !_addEditAnimalStore.isInitializing && !_addEditAnimalStore.isValueListsLoading && _addEditAnimalStore.trackingMethodList.isNotEmpty;
-
-
-                        return DropdownButtonFormField<String>(
-                          decoration: const InputDecoration(labelText: 'Takip Metodu'),
-                           items: dropdownItems.isEmpty && !isTrackingMethodDropdownEnabled && (_addEditAnimalStore.isInitializing || _addEditAnimalStore.isValueListsLoading)
-                              ? [const DropdownMenuItem(child: Text("Yükleniyor..."), value: "loading")]
-                              : dropdownItems,
-                           value: _addEditAnimalStore.selectedTrackingMethodOption?.id?.isNotEmpty == true
-                               ? _addEditAnimalStore.selectedTrackingMethodOption!.id
-                               : null,
-                           onChanged: isTrackingMethodDropdownEnabled ? (String? selectedId) {
-                             print('DEBUG: TrackingMethod selected ID: $selectedId');
-                              final selectedOption = _addEditAnimalStore.trackingMethodList.firstWhere(
-                                 (option) => option.id == selectedId,
-                                 orElse: () => ValueOption(id: '', value: '')
-                              );
-                             _addEditAnimalStore.setTrackingMethod(selectedOption.id!.isNotEmpty ? selectedOption : null);
-                           } : null,
-                            validator: (value) {
-                             // TODO: Zorunlu alan validasyonu
-                              return null;
-                           },
-                             hint: (_addEditAnimalStore.isInitializing || _addEditAnimalStore.isValueListsLoading) ? const Text('Yükleniyor...') : const Text('Takip metodu seçiniz'),
-                        );
-                      }
-                   ),
-                   const SizedBox(height: 16),
-
-                    // TrackingID - TextFormField
-                    TextFormField(
-                       controller: _trackingIDController,
-                       decoration: const InputDecoration(labelText: 'Takip ID'),
-                        onChanged: (newValue) => _addEditAnimalStore.trackingID = newValue,
-                    // TODO: Validator
-                   ),
-                   const SizedBox(height: 16),
-
-                    // TracerLocation - TextFormField
-                     TextFormField(
-                        controller: _tracerLocationController,
-                        decoration: const InputDecoration(labelText: 'Takip Konumu (Tracer Location)'),
-                         onChanged: (newValue) => _addEditAnimalStore.tracerLocation = newValue,
-                        // TODO: Validator
+                    // TrackingMethod ve TrackingID
+                    Row(
+                       crossAxisAlignment: CrossAxisAlignment.start,
+                       children: [
+                          Expanded( child: Observer( builder: (_) { final List<DropdownMenuItem<String>> dropdownItems = _addEditAnimalStore.trackingMethodList.map((ValueOption option) { return DropdownMenuItem<String>( value: option.id, child: Text(option.value ?? ''), ); }).toList(); final bool isTrackingMethodDropdownEnabled = !_addEditAnimalStore.isInitializing && !_addEditAnimalStore.isValueListsLoading && _addEditAnimalStore.trackingMethodList.isNotEmpty; return DropdownButtonFormField<String>( decoration: const InputDecoration(labelText: 'Takip Metodu'), items: dropdownItems.isEmpty && !isTrackingMethodDropdownEnabled && (_addEditAnimalStore.isInitializing || _addEditAnimalStore.isValueListsLoading) ? [const DropdownMenuItem(value: "loading", child: Text("Yükleniyor..."))] : dropdownItems, value: _addEditAnimalStore.selectedTrackingMethodOption?.id?.isNotEmpty == true ? _addEditAnimalStore.selectedTrackingMethodOption!.id : null, onChanged: isTrackingMethodDropdownEnabled ? (String? selectedId) { final selectedOption = _addEditAnimalStore.trackingMethodList.firstWhere( (option) => option.id == selectedId, orElse: () => ValueOption(id: '', value: '') ); _addEditAnimalStore.setTrackingMethod(selectedOption.id!.isNotEmpty ? selectedOption : null); } : null, validator: (value) { return null; }, hint: (_addEditAnimalStore.isInitializing || _addEditAnimalStore.isValueListsLoading) ? const Text('Yükleniyor...') : const Text('Takip metodu seçiniz'), ); } ), ),
+                          const SizedBox(width: 16),
+                          Expanded( child: TextFormField( controller: _trackingIDController, decoration: const InputDecoration(labelText: 'Takip ID'), onChanged: (newValue) => _addEditAnimalStore.trackingID = newValue, ), ),
+                       ],
                     ),
                     const SizedBox(height: 16),
 
+                    // TracerLocation
+                     TextFormField( controller: _tracerLocationController, decoration: const InputDecoration(labelText: 'Takip Konumu (Tracer Location)'), onChanged: (newValue) => _addEditAnimalStore.tracerLocation = newValue, ),
+                    const SizedBox(height: 16),
 
+
+                   // ✨ Ek Bilgiler Bölümü ✨
                    Text('Ek Bilgiler', style: Theme.of(context).textTheme.titleMedium),
                    const SizedBox(height: 16),
 
-                   // AlternateName - TextFormField
-                   TextFormField(
-                       controller: _alternateNameController,
-                       decoration: const InputDecoration(labelText: 'Alternatif Adı'),
-                        onChanged: (newValue) => _addEditAnimalStore.alternateName = newValue,
-                        // TODO: Validator
-                   ),
+                    // Markings
+                     TextFormField( controller: _markingsController, decoration: const InputDecoration(labelText: 'İşaretler'), maxLines: 3, onChanged: (newValue) => _addEditAnimalStore.markings = newValue, ),
                    const SizedBox(height: 16),
 
-                    // PassportNumber - TextFormField
-                    TextFormField(
-                       controller: _passportNumberController,
-                       decoration: const InputDecoration(labelText: 'Pasaport Numarası'),
-                        onChanged: (newValue) => _addEditAnimalStore.passportNumber = newValue,
-                        // TODO: Validator
-                   ),
-                   const SizedBox(height: 16),
-
-                    // Markings - TextFormField
-                     TextFormField(
-                        controller: _markingsController,
-                       decoration: const InputDecoration(labelText: 'İşaretler'),
-                        maxLines: 3,
-                         onChanged: (newValue) => _addEditAnimalStore.markings = newValue,
-                         // TODO: Validator
-                   ),
-                   const SizedBox(height: 16),
-
-                    // Exceptions - TextFormField
-                     TextFormField(
-                        controller: _exceptionsController,
-                       decoration: const InputDecoration(labelText: 'İstisnalar'),
-                        maxLines: 3,
-                         onChanged: (newValue) => _addEditAnimalStore.exceptions = newValue,
-                         // TODO: Validator
-                   ),
+                    // Exceptions
+                     TextFormField( controller: _exceptionsController, decoration: const InputDecoration(labelText: 'İstisnalar'), maxLines: 3, onChanged: (newValue) => _addEditAnimalStore.exceptions = newValue, ),
                    const SizedBox(height: 16),
 
 
-                   // Sahip bilgileri (Okunur alanlar)
-                   Text('Sahip Bilgileri', style: Theme.of(context).textTheme.titleMedium),
-                   const SizedBox(height: 16),
-
-                   // Owner (Sahip Adı) - TextFormField (Read-only)
-                   TextFormField(
-                        controller: _ownerController,
-                       decoration: const InputDecoration(labelText: 'Sahip Adı'),
-                        readOnly: true,
-                       // TODO: Sahip seçimi için Owner listesi/ekranına navigasyon ve sonuç işleme
-                   ),
-                   const SizedBox(height: 16),
-
-                    // Sistem Bilgileri (Read-only)
+                    // ✨ Sistem Bilgileri Bölümü (Read-only) ✨
                      Text('Sistem Bilgileri', style: Theme.of(context).textTheme.titleMedium),
                      const SizedBox(height: 16),
 
@@ -619,9 +348,6 @@ class _AddEditAnimalScreenState extends State<AddEditAnimalScreen> {
                        },
                      ),
                      const SizedBox(height: 16),
-
-
-                   // TODO: Medikal Kayıtlar ve Randevular linkleri eklenebilir
 
                  ],
                ),

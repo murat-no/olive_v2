@@ -2,7 +2,8 @@
 
 // ✨ Backend API'sinin temel URL'si ✨
 // Burayı kendi backend adresinizle DÜZENLEYİN.
-const String kBaseUrl = 'http://127.0.0.1:4011'; // Örnek: 'http://127.0.0.1:8080' veya 'https://api.uygulamanizinadi.com'
+//const String kBaseUrl = 'http://127.0.0.1:4011';
+const String kBaseUrl = 'http://192.168.1.174:4011';
 
 // TODO: İleride başka yapılandırma sabitleri (API Key'ler, varsayılan ayarlar vb.) buraya eklenebilir.
 
