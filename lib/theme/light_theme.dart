@@ -59,7 +59,7 @@ ThemeData lightTheme() {
     ),
 
     // Kart Teması
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
        elevation: 10.0,
        shape: RoundedRectangleBorder(
          borderRadius: BorderRadius.circular(15.0),

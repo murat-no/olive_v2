@@ -1,36 +1,74 @@
+// lib/models/value_option.dart
+
 import 'package:json_annotation/json_annotation.dart';
 
 part 'value_option.g.dart';
 
-// Backend'den gelen değer listesi öğesini temsil eder (Definitions struct'ına karşılık gelir)
 @JsonSerializable()
 class ValueOption {
-  @JsonKey(name: 'type') // Backend'deki JSON alanı "type"
+  @JsonKey(name: 'type')
   final String? defType;
-  @JsonKey(name: 'lang') // Backend'deki JSON alanı "lang"
+  @JsonKey(name: 'lang')
   final String? lang;
-  @JsonKey(name: 'id') // Backend'deki JSON alanı "id" (Bu değer _key alanlarına karşılık gelecek)
+  
+  // ✨ KRİTİK DÜZELTME: Backend'den gelen 'id' alanını String olarak eşle ve parse et ✨
+  @JsonKey(
+    name: 'id', // Backend'den gelen JSON anahtarı 'id'
+    fromJson: _idFromJson, // Integer'dan String'e daha güvenli dönüştürmek için özel fonksiyon
+    toJson: _idToJson,     // String'den Integer'a geri dönüştürmek için özel fonksiyon
+  )
   final String? id;
-  @JsonKey(name: 'value') // Backend'deki JSON alanı "value" (Kullanıcıya gösterilecek metin)
+
+  @JsonKey(name: 'value')
   final String? value;
-  @JsonKey(name: 'description') // Backend'deki JSON alanı "description"
+  @JsonKey(name: 'description')
   final String? description;
-  @JsonKey(name: 'parent_def') // Backend'deki JSON alanı "parent_def" (Bağımlı listeler için)
+  @JsonKey(name: 'parent')
   final String? parentKey;
-  @JsonKey(name: 'info_image_link') // Backend'deki JSON alanı "info_image_link"
+  @JsonKey(name: 'info_image_link')
   final String? infoImageLink;
 
 
   ValueOption({
     this.defType,
     this.lang,
-    this.id, // _key olarak kullanılacak
-    this.value, // Display olarak kullanılacak
+    this.id,
+    this.value,
     this.description,
-    this.parentKey, // Bağımlılık için kullanılacak
+    this.parentKey,
     this.infoImageLink,
   });
 
+  String get displayText => description ?? value ?? '';
+
+  String? get idLower => id?.toLowerCase();
+  String? get valueLower => value?.toLowerCase();
+
+
   factory ValueOption.fromJson(Map<String, dynamic> json) => _$ValueOptionFromJson(json);
   Map<String, dynamic> toJson() => _$ValueOptionToJson(this);
+
+
+  // ✨ YENİ DÖNÜŞTÜRÜCÜ FONKSİYONLAR: dynamic'ten String'e daha güvenli çevirme ✨
+  static String? _idFromJson(dynamic idJson) {
+    if (idJson == null) return null;
+    // Eğer idJson bir String ise doğrudan kullan, değilse toString() ile çevir.
+    if (idJson is String) {
+      return idJson;
+    } else {
+      return idJson.toString();
+    }
+  }
+
+  // String'den int'e veya String'e geri dönüştürücü (toJson için, backend ne bekliyorsa)
+  static dynamic _idToJson(String? idString) {
+    if (idString == null || idString.isEmpty) return null;
+    // Eğer backend ID'leri int bekliyorsa ve parse edilebiliyorsa int.
+    // Aksi takdirde String olarak gönder.
+    try {
+      return int.parse(idString);
+    } catch (e) {
+      return idString; // Parse edilemezse string olarak kalsın (UUID'ler için)
+    }
+  }
 }

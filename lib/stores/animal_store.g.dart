@@ -25,38 +25,6 @@ mixin _$AnimalStore on _AnimalStore, Store {
     });
   }
 
-  late final _$isLoadingAtom =
-      Atom(name: '_AnimalStore.isLoading', context: context);
-
-  @override
-  bool get isLoading {
-    _$isLoadingAtom.reportRead();
-    return super.isLoading;
-  }
-
-  @override
-  set isLoading(bool value) {
-    _$isLoadingAtom.reportWrite(value, super.isLoading, () {
-      super.isLoading = value;
-    });
-  }
-
-  late final _$errorMessageAtom =
-      Atom(name: '_AnimalStore.errorMessage', context: context);
-
-  @override
-  String? get errorMessage {
-    _$errorMessageAtom.reportRead();
-    return super.errorMessage;
-  }
-
-  @override
-  set errorMessage(String? value) {
-    _$errorMessageAtom.reportWrite(value, super.errorMessage, () {
-      super.errorMessage = value;
-    });
-  }
-
   late final _$searchQueryAtom =
       Atom(name: '_AnimalStore.searchQuery', context: context);
 
@@ -73,54 +41,6 @@ mixin _$AnimalStore on _AnimalStore, Store {
     });
   }
 
-  late final _$totalRowCountAtom =
-      Atom(name: '_AnimalStore.totalRowCount', context: context);
-
-  @override
-  int get totalRowCount {
-    _$totalRowCountAtom.reportRead();
-    return super.totalRowCount;
-  }
-
-  @override
-  set totalRowCount(int value) {
-    _$totalRowCountAtom.reportWrite(value, super.totalRowCount, () {
-      super.totalRowCount = value;
-    });
-  }
-
-  late final _$currentPageAtom =
-      Atom(name: '_AnimalStore.currentPage', context: context);
-
-  @override
-  int get currentPage {
-    _$currentPageAtom.reportRead();
-    return super.currentPage;
-  }
-
-  @override
-  set currentPage(int value) {
-    _$currentPageAtom.reportWrite(value, super.currentPage, () {
-      super.currentPage = value;
-    });
-  }
-
-  late final _$rowsPerPageAtom =
-      Atom(name: '_AnimalStore.rowsPerPage', context: context);
-
-  @override
-  int get rowsPerPage {
-    _$rowsPerPageAtom.reportRead();
-    return super.rowsPerPage;
-  }
-
-  @override
-  set rowsPerPage(int value) {
-    _$rowsPerPageAtom.reportWrite(value, super.rowsPerPage, () {
-      super.rowsPerPage = value;
-    });
-  }
-
   late final _$fetchAnimalsAsyncAction =
       AsyncAction('_AnimalStore.fetchAnimals', context: context);
 
@@ -130,16 +50,66 @@ mixin _$AnimalStore on _AnimalStore, Store {
         .run(() => super.fetchAnimals(query: query, page: page, rows: rows));
   }
 
+  late final _$deleteAnimalAsyncAction =
+      AsyncAction('_AnimalStore.deleteAnimal', context: context);
+
+  @override
+  Future<bool> deleteAnimal(String animalId) {
+    return _$deleteAnimalAsyncAction.run(() => super.deleteAnimal(animalId));
+  }
+
+  late final _$_AnimalStoreActionController =
+      ActionController(name: '_AnimalStore', context: context);
+
+  @override
+  void setSearchQuery(String query) {
+    final _$actionInfo = _$_AnimalStoreActionController.startAction(
+        name: '_AnimalStore.setSearchQuery');
+    try {
+      return super.setSearchQuery(query);
+    } finally {
+      _$_AnimalStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setCurrentPage(int page) {
+    final _$actionInfo = _$_AnimalStoreActionController.startAction(
+        name: '_AnimalStore.setCurrentPage');
+    try {
+      return super.setCurrentPage(page);
+    } finally {
+      _$_AnimalStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setRowsPerPage(int rows) {
+    final _$actionInfo = _$_AnimalStoreActionController.startAction(
+        name: '_AnimalStore.setRowsPerPage');
+    try {
+      return super.setRowsPerPage(rows);
+    } finally {
+      _$_AnimalStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void disposeDebounce() {
+    final _$actionInfo = _$_AnimalStoreActionController.startAction(
+        name: '_AnimalStore.disposeDebounce');
+    try {
+      return super.disposeDebounce();
+    } finally {
+      _$_AnimalStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
   @override
   String toString() {
     return '''
 animals: ${animals},
-isLoading: ${isLoading},
-errorMessage: ${errorMessage},
-searchQuery: ${searchQuery},
-totalRowCount: ${totalRowCount},
-currentPage: ${currentPage},
-rowsPerPage: ${rowsPerPage}
+searchQuery: ${searchQuery}
     ''';
   }
 }

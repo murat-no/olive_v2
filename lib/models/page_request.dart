@@ -7,6 +7,7 @@ class PageRequest {
   final int currentPage;
   final int rowsPerPage;
   final String lang;
+  bool debug = false;
   @JsonKey(name: 'QueryCriteria') // Backend'deki anahtar adı
   final Map<String, String>? queryCriteria; // Null olabilir eğer kriter yoksa
 
@@ -14,6 +15,7 @@ class PageRequest {
     required this.currentPage,
     required this.rowsPerPage,
     required this.lang,
+    required this.debug,
     this.queryCriteria, // Nullable
   });
 

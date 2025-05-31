@@ -5,6 +5,8 @@ import 'package:olive_v2/theme/dark_theme.dart';
 import 'package:olive_v2/stores/login_store.dart';
 import 'package:olive_v2/stores/animal_store.dart';
 import 'package:olive_v2/stores/add_edit_animal_store.dart';
+import 'package:olive_v2/stores/owner_store.dart';
+import 'package:olive_v2/stores/add_edit_owner_store.dart'; 
 import 'package:olive_v2/screens/splash_screen.dart';
 
 
@@ -22,6 +24,8 @@ class MyApp extends StatelessWidget {
         Provider<LoginStore>(create: (_) => LoginStore()),
         Provider<AnimalStore>(create: (_) => AnimalStore()),
         Provider<AddEditAnimalStore>(create: (_) => AddEditAnimalStore()),
+        Provider<OwnerStore>(create: (_) => OwnerStore()),
+        Provider<AddEditOwnerStore>(create: (_) => AddEditOwnerStore()), 
       ],
       child: MaterialApp(
         title: 'Veteriner Uygulaması',

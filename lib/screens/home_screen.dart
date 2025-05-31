@@ -4,6 +4,7 @@ import 'package:flutter_mobx/flutter_mobx.dart'; // Observer için
 import 'package:olive_v2/stores/login_store.dart'; // LoginStore'u import et
 import 'package:olive_v2/screens/login_screen.dart'; // Yönleneceğimiz login ekranı
 import 'package:olive_v2/screens/animal_list_screen.dart'; // AnimalListScreen'ı import et
+import 'package:olive_v2/screens/owner_list_screen.dart'; // ✨ YENİ: OwnerListScreen'ı import et ✨
 
 
 class HomeScreen extends StatelessWidget {
@@ -11,14 +12,8 @@ class HomeScreen extends StatelessWidget {
 
   // Çıkış işlemini yapacak metod
   void _logout(BuildContext context) async {
-    // Provider aracılığıyla LoginStore'a eriş
     final loginStore = Provider.of<LoginStore>(context, listen: false);
-
-    // LoginStore'daki logout aksiyonunu çağır
     await loginStore.logout();
-
-    // Token silindikten sonra login ekranına yönlendir
-    // pushReplacement kullanarak geri dönülmesini engelle
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const LoginScreen()),
@@ -27,36 +22,34 @@ class HomeScreen extends StatelessWidget {
 
   // Menü öğelerine tıklandığında çalışacak navigasyon metodu
   void _onMenuItemTap(BuildContext context, String menuItem) {
-    // Çekmece menüyü kapat
-    Navigator.pop(context);
+    Navigator.pop(context); // Çekmece menüyü kapat
 
-    // Tıklanan menü öğesine göre yönlendirme yap
     switch (menuItem) {
       case 'Hastalar':
         print('DEBUG: Hastalar menüsü tıklandı.');
-        // AnimalListScreen'a yönlendirme
-        Navigator.push( // Login ekranına dönülmemesi için pushReplacement
+        Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const AnimalListScreen()),
         );
         break;
       case 'Sahipler':
         print('DEBUG: Sahipler menüsü tıklandı.');
-        // TODO: Sahip Listesi ekranına yönlendirme yapılacak
-        // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const OwnerListScreen()));
+        // ✨ YENİ: OwnerListScreen'a yönlendirme ✨
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const OwnerListScreen()),
+        );
         break;
       case 'Randevular':
          print('DEBUG: Randevular menüsü tıklandı.');
          // TODO: Randevu ekranına yönlendirme yapılacak
-         // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const AppointmentScreen()));
         break;
       case 'Ayarlar':
          print('DEBUG: Ayarlar menüsü tıklandı.');
          // TODO: Ayarlar ekranına yönlendirme yapılacak
-         // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SettingsScreen()));
         break;
       case 'Çıkış Yap':
-        _logout(context); // Logout metodunu çağır
+        _logout(context);
         break;
       default:
         print('DEBUG: Bilinmeyen menü öğesi: $menuItem');
@@ -66,64 +59,50 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // LoginStore'u dinlemek için Observer içinde kullanıyoruz veya context.watch kullanabiliriz.
-    // AppBar içindeki Observer zaten store'u dinleyecek.
-    final loginStore = Provider.of<LoginStore>(context); // Observer içinde kullanmak için, listen default true
+    final loginStore = Provider.of<LoginStore>(context);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Ana Ekran'),
         centerTitle: true,
-         // AppBar'a menü ikonunu otomatik ekler, drawer tanımlıysa
-         leading: Builder( // Drawer'ı açmak için Builder kullanıyoruz (context sağlamak için)
+         leading: Builder(
            builder: (BuildContext context) {
              return IconButton(
                icon: const Icon(Icons.menu),
                onPressed: () {
-                 Scaffold.of(context).openDrawer(); // Çekmece menüyü aç
+                 Scaffold.of(context).openDrawer();
                },
                tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
              );
            },
          ),
         actions: [
-          // Kullanıcı Adını Gösteren Observer Widget'ı
-          Observer( // loginStore.currentUserName değişimini dinler
+          Observer(
             builder: (_) {
-              // loginStore.currentUserName null değilse kullanıcı adını göster
               if (loginStore.currentUserName != null) {
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0), // Kenarlardan boşluk
-                  child: Center( // Metni dikeyde ortala
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Center(
                     child: Text(
-                      loginStore.currentUserName!, // null olmadığını biliyoruz burada
+                      loginStore.currentUserName!,
                       style: const TextStyle(
-                        color: Colors.white, // AppBar yazı rengiyle uyumlu
+                        color: Colors.white,
                         fontSize: 16,
-                        // fontWeight: FontWeight.bold, // İsteğe bağlı kalınlık
                       ),
                     ),
                   ),
                 );
               }
-              // Kullanıcı adı yoksa (logout sonrası veya başlangıçta) hiçbir şey gösterme
               return const SizedBox.shrink();
             },
           ),
-          // Çıkış butonu artık menüde
-          // IconButton(
-          //   icon: const Icon(Icons.logout),
-          //   tooltip: 'Çıkış Yap',
-          //   onPressed: () => _logout(context),
-          // ),
         ],
       ),
-      // Çekmece Menü (Drawer) Tanımı
       drawer: Drawer(
-        child: ListView( // Menü öğelerini listelemek için ListView kullan
-          padding: EdgeInsets.zero, // Padding'i sıfırla
+        child: ListView(
+          padding: EdgeInsets.zero,
           children: <Widget>[
-             DrawerHeader( // Menü başlığı (isteğe bağlı)
+             DrawerHeader(
               decoration: BoxDecoration(
                 color: Theme.of(context).primaryColor,
               ),
@@ -131,63 +110,58 @@ class HomeScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // TODO: Uygulama logosu veya kullanıcının profil fotoğrafı
-                  // CircleAvatar(radius: 30, child: Icon(Icons.person)),
-                   // SizedBox(height: 8),
                   const Text(
-                    'Menü', // Menü başlığı
+                    'Menü',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 24,
                     ),
                   ),
-                  // Kullanıcı adını menü başlığında da göstermek isterseniz
-                  Observer( // loginStore.currentUserName değişimini dinler
+                  Observer(
                     builder: (_) => Text(
-                       loginStore.currentUserName ?? '', // Kullanıcı adını göster (null ise boş string)
+                       loginStore.currentUserName ?? '',
                        style: const TextStyle(color: Colors.white70),
                     ),
                   ),
                 ],
               ),
             ),
-            ListTile( // Menü öğesi: Hastalar
+            ListTile(
               leading: const Icon(Icons.pets),
               title: const Text('Hastalar'),
               onTap: () {
-                _onMenuItemTap(context, 'Hastalar'); // Tıklanınca metodu çağır
+                _onMenuItemTap(context, 'Hastalar');
               },
             ),
-             ListTile( // Menü öğesi: Sahipler
+             ListTile(
               leading: const Icon(Icons.people),
               title: const Text('Sahipler'),
               onTap: () {
                 _onMenuItemTap(context, 'Sahipler');
               },
             ),
-             ListTile( // Menü öğesi: Randevular
+             ListTile(
               leading: const Icon(Icons.calendar_today),
               title: const Text('Randevular'),
               onTap: () {
                 _onMenuItemTap(context, 'Randevular');
               },
             ),
-            const Divider(), // Ayırıcı çizgi
-             ListTile( // Menü öğesi: Ayarlar
+            const Divider(),
+             ListTile(
               leading: const Icon(Icons.settings),
               title: const Text('Ayarlar'),
               onTap: () {
                 _onMenuItemTap(context, 'Ayarlar');
               },
             ),
-             ListTile( // Menü öğesi: Çıkış Yap
+             ListTile(
               leading: const Icon(Icons.logout),
               title: const Text('Çıkış Yap'),
               onTap: () {
-                _onMenuItemTap(context, 'Çıkış Yap'); // Logout işlemini çağır
+                _onMenuItemTap(context, 'Çıkış Yap');
               },
             ),
-            // Diğer menü öğeleri buraya eklenebilir
           ],
         ),
       ),
@@ -196,7 +170,7 @@ class HomeScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
              Text(
-              'Ana Ekran İçeriği', // Artık burası sadece ana ekran içeriği
+              'Ana Ekran İçeriği',
               style: TextStyle(fontSize: 24),
             ),
              SizedBox(height: 16),

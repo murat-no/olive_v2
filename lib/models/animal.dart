@@ -1,3 +1,5 @@
+// lib/models/animal.dart
+
 import 'package:json_annotation/json_annotation.dart';
 
 part 'animal.g.dart';
@@ -11,43 +13,43 @@ class Animal {
   @JsonKey(name: 'passport_number')
   final String? passportNumber;
 
-  // ✨ Display alanlarını JSON'dan hariç tutmak için includeToJson: false eklendi ✨
-  @JsonKey(includeToJson: false)
+  @JsonKey(name: 'family_id') // family_key yerine family_id
+  final String? familyId; // Backend'den gelen ID
+  @JsonKey(includeToJson: false) // family display
   final String? family;
-  @JsonKey(name: 'family_key')
-  final String? familyKey;
-  @JsonKey(includeToJson: false)
-  final String? race;
-  @JsonKey(name: 'race_key')
-  final String? raceKey;
-  @JsonKey(includeToJson: false)
-  final String? color; // Eğer color için de key varsa burası da güncellenmeli
-  @JsonKey(name: 'color_disp')
-  final String? colorDisp; // Eğer color_disp için de key varsa burası da güncellenmeli
 
-  @JsonKey(name: 'blood_group') // BloodGroup'un key'i yok, metin alanı gönderiliyor
+  @JsonKey(name: 'race_id') // race_key yerine race_id
+  final String? raceId; // Backend'den gelen ID
+  @JsonKey(includeToJson: false) // race display
+  final String? race;
+
+  final String? color; // color_disp yerine color
+  @JsonKey(name: 'color_disp') // color_disp hala varsa
+  final String? colorDisp;
+
+  @JsonKey(name: 'blood_group')
   final String? bloodGroup;
 
-  @JsonKey(includeToJson: false)
+  @JsonKey(name: 'sex_id') // sex_key yerine sex_id
+  final String? sexId; // Backend'den gelen ID
+  @JsonKey(includeToJson: false) // sex display
   final String? sex;
-  @JsonKey(name: 'sex_key')
-  final String? sexKey;
 
-  @JsonKey(name: 'birth_date') // birth_date string olarak kalacak
+  @JsonKey(name: 'birth_date')
   final String? birthDate;
 
-  @JsonKey(includeToJson: false)
+  @JsonKey(name: 'breed_id') // breed_key yerine breed_id
+  final String? breedId; // Backend'den gelen ID
+  @JsonKey(includeToJson: false) // breed display
   final String? breed;
-  @JsonKey(name: 'breed_key')
-  final String? breedKey;
 
   final String? markings;
   final String? exceptions;
 
-  @JsonKey(name: 'tracking_method') // tracking_method alanı key değeri tutuyor
+  @JsonKey(name: 'tracking_method') // tracking_method ID
   final String? trackingMethod;
   @JsonKey(includeToJson: false)
-  @JsonKey(name: 'tracking_method_disp') // Eğer tracking_method_disp için de key varsa burası da güncellenmeli
+  @JsonKey(name: 'tracking_method_disp') // tracking_method display
   final String? trackingMethodDisp;
 
   @JsonKey(name: 'tracking_id')
@@ -55,34 +57,32 @@ class Animal {
   @JsonKey(name: 'tracer_location')
   final String? tracerLocation;
 
-  @JsonKey(includeToJson: false)
-  final String? owner; // Owner display
-  @JsonKey(name: 'owner_id')
-  final String? ownerId; // Owner key
+  @JsonKey(includeToJson: false) // owner display
+  final String? owner;
+  @JsonKey(name: 'owner_id') // owner key (UUID)
+  final String? ownerId;
 
-  // Sistem alanları frontend'den gönderilmeyecek, sadece backend'den okunacak.
-  // includeToJson: false ekleyerek backend'e göndermeyi engelliyoruz.
-  // fromJson'da parse edilirken sorun olmaz, çünkü bu alanlar backend'den geliyor.
-  @JsonKey(name: 'created_at', includeToJson: false) 
+  // Sistem alanları
+  @JsonKey(name: 'created_at', includeToJson: false)
   final DateTime? createdAt;
-  @JsonKey(name: 'created_by', includeToJson: false) 
+  @JsonKey(name: 'created_by', includeToJson: false)
   final int? createdBy;
-  @JsonKey(name: 'updated_at', includeToJson: false) 
+  @JsonKey(name: 'updated_at', includeToJson: false)
   final DateTime? updatedAt;
-  @JsonKey(name: 'updated_by', includeToJson: false) 
+  @JsonKey(name: 'updated_by', includeToJson: false)
   final int? updatedBy;
 
 
   Animal({
     this.id, this.name, this.alternateName, this.passportNumber,
-    this.family, this.familyKey, this.race, this.raceKey, this.color, this.colorDisp,
+    this.family, this.familyId, this.race, this.raceId, this.color, this.colorDisp,
     this.bloodGroup,
-    this.sex, this.sexKey, this.birthDate, this.breed, this.breedKey, this.markings, this.exceptions,
+    this.sex, this.sexId, this.birthDate, this.breed, this.breedId, this.markings, this.exceptions,
     this.trackingMethod, this.trackingMethodDisp, this.trackingID, this.tracerLocation,
     this.owner, this.ownerId,
-    this.createdAt, this.createdBy, this.updatedAt, this.updatedBy, // Constructor'da kalabilir, fromJson set edecek.
+    this.createdAt, this.createdBy, this.updatedAt, this.updatedBy,
   });
 
   factory Animal.fromJson(Map<String, dynamic> json) => _$AnimalFromJson(json);
-  Map<String, dynamic> toJson() => _$AnimalToJson(this); // Bu metod, includeToJson: false olan alanları atlayacak
+  Map<String, dynamic> toJson() => _$AnimalToJson(this);
 }

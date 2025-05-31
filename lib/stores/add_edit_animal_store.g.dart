@@ -9,6 +9,55 @@ part of 'add_edit_animal_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$AddEditAnimalStore on _AddEditAnimalStore, Store {
+  late final _$isValueListsLoadingAtom =
+      Atom(name: '_AddEditAnimalStore.isValueListsLoading', context: context);
+
+  @override
+  bool get isValueListsLoading {
+    _$isValueListsLoadingAtom.reportRead();
+    return super.isValueListsLoading;
+  }
+
+  @override
+  set isValueListsLoading(bool value) {
+    _$isValueListsLoadingAtom.reportWrite(value, super.isValueListsLoading, () {
+      super.isValueListsLoading = value;
+    });
+  }
+
+  late final _$valueListsErrorMessageAtom = Atom(
+      name: '_AddEditAnimalStore.valueListsErrorMessage', context: context);
+
+  @override
+  String? get valueListsErrorMessage {
+    _$valueListsErrorMessageAtom.reportRead();
+    return super.valueListsErrorMessage;
+  }
+
+  @override
+  set valueListsErrorMessage(String? value) {
+    _$valueListsErrorMessageAtom
+        .reportWrite(value, super.valueListsErrorMessage, () {
+      super.valueListsErrorMessage = value;
+    });
+  }
+
+  late final _$isInitializingAtom =
+      Atom(name: '_AddEditAnimalStore.isInitializing', context: context);
+
+  @override
+  bool get isInitializing {
+    _$isInitializingAtom.reportRead();
+    return super.isInitializing;
+  }
+
+  @override
+  set isInitializing(bool value) {
+    _$isInitializingAtom.reportWrite(value, super.isInitializing, () {
+      super.isInitializing = value;
+    });
+  }
+
   late final _$idAtom = Atom(name: '_AddEditAnimalStore.id', context: context);
 
   @override
@@ -88,19 +137,19 @@ mixin _$AddEditAnimalStore on _AddEditAnimalStore, Store {
     });
   }
 
-  late final _$familyKeyAtom =
-      Atom(name: '_AddEditAnimalStore.familyKey', context: context);
+  late final _$familyIdAtom =
+      Atom(name: '_AddEditAnimalStore.familyId', context: context);
 
   @override
-  String? get familyKey {
-    _$familyKeyAtom.reportRead();
-    return super.familyKey;
+  String? get familyId {
+    _$familyIdAtom.reportRead();
+    return super.familyId;
   }
 
   @override
-  set familyKey(String? value) {
-    _$familyKeyAtom.reportWrite(value, super.familyKey, () {
-      super.familyKey = value;
+  set familyId(String? value) {
+    _$familyIdAtom.reportWrite(value, super.familyId, () {
+      super.familyId = value;
     });
   }
 
@@ -120,19 +169,19 @@ mixin _$AddEditAnimalStore on _AddEditAnimalStore, Store {
     });
   }
 
-  late final _$raceKeyAtom =
-      Atom(name: '_AddEditAnimalStore.raceKey', context: context);
+  late final _$raceIdAtom =
+      Atom(name: '_AddEditAnimalStore.raceId', context: context);
 
   @override
-  String? get raceKey {
-    _$raceKeyAtom.reportRead();
-    return super.raceKey;
+  String? get raceId {
+    _$raceIdAtom.reportRead();
+    return super.raceId;
   }
 
   @override
-  set raceKey(String? value) {
-    _$raceKeyAtom.reportWrite(value, super.raceKey, () {
-      super.raceKey = value;
+  set raceId(String? value) {
+    _$raceIdAtom.reportWrite(value, super.raceId, () {
+      super.raceId = value;
     });
   }
 
@@ -152,19 +201,19 @@ mixin _$AddEditAnimalStore on _AddEditAnimalStore, Store {
     });
   }
 
-  late final _$breedKeyAtom =
-      Atom(name: '_AddEditAnimalStore.breedKey', context: context);
+  late final _$breedIdAtom =
+      Atom(name: '_AddEditAnimalStore.breedId', context: context);
 
   @override
-  String? get breedKey {
-    _$breedKeyAtom.reportRead();
-    return super.breedKey;
+  String? get breedId {
+    _$breedIdAtom.reportRead();
+    return super.breedId;
   }
 
   @override
-  set breedKey(String? value) {
-    _$breedKeyAtom.reportWrite(value, super.breedKey, () {
-      super.breedKey = value;
+  set breedId(String? value) {
+    _$breedIdAtom.reportWrite(value, super.breedId, () {
+      super.breedId = value;
     });
   }
 
@@ -200,19 +249,19 @@ mixin _$AddEditAnimalStore on _AddEditAnimalStore, Store {
     });
   }
 
-  late final _$sexKeyAtom =
-      Atom(name: '_AddEditAnimalStore.sexKey', context: context);
+  late final _$sexIdAtom =
+      Atom(name: '_AddEditAnimalStore.sexId', context: context);
 
   @override
-  String? get sexKey {
-    _$sexKeyAtom.reportRead();
-    return super.sexKey;
+  String? get sexId {
+    _$sexIdAtom.reportRead();
+    return super.sexId;
   }
 
   @override
-  set sexKey(String? value) {
-    _$sexKeyAtom.reportWrite(value, super.sexKey, () {
-      super.sexKey = value;
+  set sexId(String? value) {
+    _$sexIdAtom.reportWrite(value, super.sexId, () {
+      super.sexId = value;
     });
   }
 
@@ -456,87 +505,6 @@ mixin _$AddEditAnimalStore on _AddEditAnimalStore, Store {
     });
   }
 
-  late final _$isLoadingAtom =
-      Atom(name: '_AddEditAnimalStore.isLoading', context: context);
-
-  @override
-  bool get isLoading {
-    _$isLoadingAtom.reportRead();
-    return super.isLoading;
-  }
-
-  @override
-  set isLoading(bool value) {
-    _$isLoadingAtom.reportWrite(value, super.isLoading, () {
-      super.isLoading = value;
-    });
-  }
-
-  late final _$errorMessageAtom =
-      Atom(name: '_AddEditAnimalStore.errorMessage', context: context);
-
-  @override
-  String? get errorMessage {
-    _$errorMessageAtom.reportRead();
-    return super.errorMessage;
-  }
-
-  @override
-  set errorMessage(String? value) {
-    _$errorMessageAtom.reportWrite(value, super.errorMessage, () {
-      super.errorMessage = value;
-    });
-  }
-
-  late final _$isValueListsLoadingAtom =
-      Atom(name: '_AddEditAnimalStore.isValueListsLoading', context: context);
-
-  @override
-  bool get isValueListsLoading {
-    _$isValueListsLoadingAtom.reportRead();
-    return super.isValueListsLoading;
-  }
-
-  @override
-  set isValueListsLoading(bool value) {
-    _$isValueListsLoadingAtom.reportWrite(value, super.isValueListsLoading, () {
-      super.isValueListsLoading = value;
-    });
-  }
-
-  late final _$valueListsErrorMessageAtom = Atom(
-      name: '_AddEditAnimalStore.valueListsErrorMessage', context: context);
-
-  @override
-  String? get valueListsErrorMessage {
-    _$valueListsErrorMessageAtom.reportRead();
-    return super.valueListsErrorMessage;
-  }
-
-  @override
-  set valueListsErrorMessage(String? value) {
-    _$valueListsErrorMessageAtom
-        .reportWrite(value, super.valueListsErrorMessage, () {
-      super.valueListsErrorMessage = value;
-    });
-  }
-
-  late final _$isInitializingAtom =
-      Atom(name: '_AddEditAnimalStore.isInitializing', context: context);
-
-  @override
-  bool get isInitializing {
-    _$isInitializingAtom.reportRead();
-    return super.isInitializing;
-  }
-
-  @override
-  set isInitializing(bool value) {
-    _$isInitializingAtom.reportWrite(value, super.isInitializing, () {
-      super.isInitializing = value;
-    });
-  }
-
   late final _$familyListAtom =
       Atom(name: '_AddEditAnimalStore.familyList', context: context);
 
@@ -726,12 +694,13 @@ mixin _$AddEditAnimalStore on _AddEditAnimalStore, Store {
     return _$fetchValueListsAsyncAction.run(() => super.fetchValueLists());
   }
 
-  late final _$fetchRacesAsyncAction =
-      AsyncAction('_AddEditAnimalStore.fetchRaces', context: context);
+  late final _$fetchRacesByValueAsyncAction =
+      AsyncAction('_AddEditAnimalStore.fetchRacesByValue', context: context);
 
   @override
-  Future<void> fetchRaces(String familyId) {
-    return _$fetchRacesAsyncAction.run(() => super.fetchRaces(familyId));
+  Future<void> fetchRacesByValue(String familyValue) {
+    return _$fetchRacesByValueAsyncAction
+        .run(() => super.fetchRacesByValue(familyValue));
   }
 
   late final _$saveAnimalAsyncAction =
@@ -825,19 +794,22 @@ mixin _$AddEditAnimalStore on _AddEditAnimalStore, Store {
   @override
   String toString() {
     return '''
+isValueListsLoading: ${isValueListsLoading},
+valueListsErrorMessage: ${valueListsErrorMessage},
+isInitializing: ${isInitializing},
 id: ${id},
 name: ${name},
 alternateName: ${alternateName},
 passportNumber: ${passportNumber},
 family: ${family},
-familyKey: ${familyKey},
+familyId: ${familyId},
 race: ${race},
-raceKey: ${raceKey},
+raceId: ${raceId},
 breed: ${breed},
-breedKey: ${breedKey},
+breedId: ${breedId},
 bloodGroup: ${bloodGroup},
 sex: ${sex},
-sexKey: ${sexKey},
+sexId: ${sexId},
 trackingMethodDisp: ${trackingMethodDisp},
 trackingMethod: ${trackingMethod},
 color: ${color},
@@ -853,11 +825,6 @@ createdAt: ${createdAt},
 createdBy: ${createdBy},
 updatedAt: ${updatedAt},
 updatedBy: ${updatedBy},
-isLoading: ${isLoading},
-errorMessage: ${errorMessage},
-isValueListsLoading: ${isValueListsLoading},
-valueListsErrorMessage: ${valueListsErrorMessage},
-isInitializing: ${isInitializing},
 familyList: ${familyList},
 raceList: ${raceList},
 breedList: ${breedList},

@@ -10,6 +10,7 @@ PageRequest _$PageRequestFromJson(Map<String, dynamic> json) => PageRequest(
       currentPage: (json['currentPage'] as num).toInt(),
       rowsPerPage: (json['rowsPerPage'] as num).toInt(),
       lang: json['lang'] as String,
+      debug: json['debug'] as bool,
       queryCriteria: (json['QueryCriteria'] as Map<String, dynamic>?)?.map(
         (k, e) => MapEntry(k, e as String),
       ),
@@ -20,5 +21,6 @@ Map<String, dynamic> _$PageRequestToJson(PageRequest instance) =>
       'currentPage': instance.currentPage,
       'rowsPerPage': instance.rowsPerPage,
       'lang': instance.lang,
+      'debug': instance.debug,
       'QueryCriteria': instance.queryCriteria,
     };

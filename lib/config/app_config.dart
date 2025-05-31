@@ -1,9 +1,8 @@
 // Uygulamanın genel yapılandırma sabitleri
 
-// ✨ Backend API'sinin temel URL'si ✨
-// Burayı kendi backend adresinizle DÜZENLEYİN.
-//const String kBaseUrl = 'http://127.0.0.1:4011';
 const String kBaseUrl = 'http://192.168.1.174:4011';
+//const String kBaseUrl = 'http://localhost:4011';
+const String kTurkeyLocationKey = '90';
 
 // TODO: İleride başka yapılandırma sabitleri (API Key'ler, varsayılan ayarlar vb.) buraya eklenebilir.
 
